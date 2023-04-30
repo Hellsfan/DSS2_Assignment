@@ -1,5 +1,7 @@
 ﻿using DnDShop.Application.Models;
 using DnDShop.Application.Services.Interfaces;
+using DnDShop.Infrastructure.Database.Configuration;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,34 +12,80 @@ namespace DnDShop.Infrastructure.Repositories
 {
     public class ProductRepository : IProductRepository
     {
+        private readonly DatabaseContext _context;
+
+        public ProductRepository(DatabaseContext context)
+        {
+            _context = context;
+        }
+
         public Task DeleteAsync(Product entity)
         {
-            throw new NotImplementedException();
+            _context.Products.Remove(entity);
+            return Task.CompletedTask;
         }
 
-        public Task<Product> GetAsync(long? id)
+        public async Task<Product> GetAsync(long? id)
         {
-            throw new NotImplementedException();
+            return await _context.Products.AsQueryable()
+                .Include(e => e.Price)
+                .Include(e => e.Category)
+                .Where(e => e.Id == id)
+                .SingleAsync();
         }
 
-        public Task<IEnumerable<Product>> GetAsync()
+        public async Task<IEnumerable<Product>> GetAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Products.AsQueryable()
+                .Include(e => e.Price)
+                .Include(e => e.Category)
+                .ToListAsync();
         }
 
-        public Task<IEnumerable<Product>> GetByCategoryAsync(long? categoryId)
+        public async Task<IEnumerable<Product>> GetByCategoryAsync(long? categoryId)
         {
-            throw new NotImplementedException();
+            return await _context.Products.AsQueryable()
+                .Include(e => e.Price)
+                .Include(e => e.Category)
+                .Where(e => e.CategoryId == categoryId)
+                .ToListAsync();
         }
 
-        public Task<long?> SaveAsync(Product entity)
+        public async Task<bool> IsProductUniqueAsync(string name)
         {
-            throw new NotImplementedException();
+            var exists = await _context.Products.AsQueryable()
+                .Where(e => e.Name == name)
+                .Select(e => true)
+                .AnyAsync();
+
+            return !exists;
+        }
+
+        public async Task<bool> IsProductUniqueAsync(
+            string name,
+            long? productId)
+        {
+            var exists = await _context.Products.AsQueryable()
+                .Where(e => e.Name == name)
+                .Where(e => e.Id != productId)
+                .Select(e => true)
+                .AnyAsync();
+
+            return !exists;
+        }
+
+        public async Task<long?> SaveAsync(Product entity)
+        {
+            var data = await _context.Products.AddAsync(entity);
+
+            return entity.Id;
         }
 
         public Task UpdateAsync(Product entity)
         {
-            throw new NotImplementedException();
+            _context.Entry(entity).State = EntityState.Modified;
+
+            return Task.CompletedTask;
         }
     }
 }

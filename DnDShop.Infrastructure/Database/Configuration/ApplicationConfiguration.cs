@@ -15,16 +15,15 @@ namespace DnDShop.Infrastructure.Database.Configuration
     public static class ApplicationConfiguration
     {
         public static IServiceCollection AddDatabase(
-    this IServiceCollection services,
-    string connectionString,
-    Assembly mappingAssembly)
+            this IServiceCollection services,
+            string connectionString,
+            Assembly mappingAssembly)
         {
             services.AddDbContext<DatabaseContext>(opt =>
             {
                 opt.UseSqlite(connectionString, config =>
                 {
                     config.MigrationsAssembly(mappingAssembly.GetName().Name);
-                    config.MigrationsHistoryTable("migration_history", "dbo");
                 });
 
                 opt.EnableDetailedErrors(true);
@@ -33,6 +32,9 @@ namespace DnDShop.Infrastructure.Database.Configuration
                     e.Default(WarningBehavior.Log);
                 });
             });
+
+            services.AddRepositories();
+
             return services;
         }
 

@@ -1,5 +1,7 @@
 ﻿using DnDShop.Application.Models;
 using DnDShop.Application.Services.Interfaces;
+using DnDShop.Infrastructure.Database.Configuration;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,32 +12,59 @@ namespace DnDShop.Infrastructure.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
+        private readonly DatabaseContext _context;
+
+        public CategoryRepository(DatabaseContext context)
+        {
+            _context = context;
+        }
+
         public Task DeleteAsync(Category entity)
         {
-            throw new NotImplementedException();
+            _context.Categories.Remove(entity);
+            return Task.CompletedTask;
         }
 
-        public Task<Category> GetAsync(long? id)
+        public async Task<Category> GetAsync(long? id)
         {
-            throw new NotImplementedException();
+            return await _context.Categories.AsQueryable()
+                .Where(e => e.Id == id)
+                .SingleAsync();
         }
 
-        public Task<IEnumerable<Category>> GetAsync()
+        public async Task<IEnumerable<Category>> GetAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Categories.AsQueryable()
+                .ToListAsync();
         }
 
-        public Task<Category> GetCategoryByProduct(Product product)
+        public async Task<bool> IsCategoryUniqueAsync(
+            long? categoryId,
+            string name)
         {
-            throw new NotImplementedException();
+            var exists = await _context.Categories.AsQueryable()
+                .Where(e => e.Name == name)
+                .Where(e => e.Id != categoryId)
+                .Select(e => e.Id)
+                .AnyAsync();
+
+            return !exists;
         }
 
-        public Task<long?> SaveAsync(Category entity)
+        public async Task<long?> SaveAsync(Category entity)
         {
-            throw new NotImplementedException();
+            await _context.Categories.AddAsync(entity);
+            return entity.Id;
         }
 
         public Task UpdateAsync(Category entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+
+            return Task.CompletedTask;
+        }
+
+        Task<Category> ICategoryRepository.GetCategoryByProduct(Product product)
         {
             throw new NotImplementedException();
         }

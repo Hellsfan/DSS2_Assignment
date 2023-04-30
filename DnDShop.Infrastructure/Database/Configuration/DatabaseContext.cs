@@ -29,7 +29,7 @@ namespace DnDShop.Infrastructure.Database.Configuration
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-/*            modelBuilder.ApplyConfigurationsFromAssembly(
+            modelBuilder.ApplyConfigurationsFromAssembly(
                 typeof(ProductMapping).Assembly);
 
             var category1 = Category.Create("Other");
@@ -38,14 +38,14 @@ namespace DnDShop.Infrastructure.Database.Configuration
             modelBuilder.Entity<Category>()
                 .HasData(category1);
 
-            base.OnModelCreating(modelBuilder);*/
+            base.OnModelCreating(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlite("Data Source=main.db", config =>
+                optionsBuilder.UseSqlite("Data Source=DnD.db", config =>
                 {
                     config.MigrationsAssembly("DnDShop.Infrastructure");
                     config.MigrationsHistoryTable("migration_history", "dbo");
