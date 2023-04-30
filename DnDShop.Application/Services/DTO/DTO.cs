@@ -12,7 +12,7 @@ namespace DnDShop.Application.Services.DTO
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Quanitity { get; set; }
+        public int Quantity { get; set; }
         public long? CategoryId { get; set; }
         public int Price { get; set; }
     }
@@ -21,7 +21,7 @@ namespace DnDShop.Application.Services.DTO
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Quanitity { get; set; }
+        public int Quantity { get; set; }
         public int Price { get; set; }
     }
 
@@ -30,7 +30,7 @@ namespace DnDShop.Application.Services.DTO
         public long? ProductId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Quanitity { get; set; }
+        public int Quantity { get; set; }
         public int Price { get; set; }
     }
 

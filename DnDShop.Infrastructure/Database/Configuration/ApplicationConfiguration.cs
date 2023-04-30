@@ -21,7 +21,7 @@ namespace DnDShop.Infrastructure.Database.Configuration
         {
             services.AddDbContext<DatabaseContext>(opt =>
             {
-                opt.UseNpgsql(connectionString, config =>
+                opt.UseSqlite(connectionString, config =>
                 {
                     config.MigrationsAssembly(mappingAssembly.GetName().Name);
                     config.MigrationsHistoryTable("migration_history", "dbo");
@@ -33,9 +33,6 @@ namespace DnDShop.Infrastructure.Database.Configuration
                     e.Default(WarningBehavior.Log);
                 });
             });
-
-            services.AddRepositories();
-
             return services;
         }
 

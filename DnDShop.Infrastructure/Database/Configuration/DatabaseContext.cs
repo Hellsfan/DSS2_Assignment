@@ -1,21 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using DnDShop.Application.Services.Interfaces;
-using DnDShop.Infrastructure.Repositories;
+using System.Xml.Linq;
 using DnDShop.Application.Models;
-using System.Diagnostics.CodeAnalysis;
 using DnDShop.Infrastructure.Database.Mappings;
 
 namespace DnDShop.Infrastructure.Database.Configuration
 {
-    public class DatabaseContext
+    public class DatabaseContext : DbContext
     {
         public DatabaseContext()
         {
@@ -33,7 +29,7 @@ namespace DnDShop.Infrastructure.Database.Configuration
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(
+/*            modelBuilder.ApplyConfigurationsFromAssembly(
                 typeof(ProductMapping).Assembly);
 
             var category1 = Category.Create("Other");
@@ -42,7 +38,7 @@ namespace DnDShop.Infrastructure.Database.Configuration
             modelBuilder.Entity<Category>()
                 .HasData(category1);
 
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);*/
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -1,4 +1,7 @@
-﻿using DnDShop.Application.Services.DTO;
+﻿using AutoMapper;
+using DnDShop.Application.Models;
+using DnDShop.Application.Services.DTO;
+using DnDShop.Application.Services.Interfaces;
 using DnDShop.Application.Services.Interfaces.Services;
 using System;
 using System.Collections.Generic;
@@ -10,29 +13,119 @@ namespace DnDShop.Application.Services.Implementations
 {
     public class ProductService : IProductService
     {
-        public Task<long?> CreateProductAsync(CreateProductDTO createProduct)
+        private readonly IMapper _mapper;
+        private readonly IProductRepository _productRepository;
+
+        public ProductService(
+            IMapper mapper,
+            IProductRepository productRepository)
         {
-            throw new NotImplementedException();
+            _mapper = mapper;
+            _productRepository = productRepository;
         }
 
-        public Task DeleteProductAsync(long? productId)
+        public async Task<long?> CreateProductAsync(
+            CreateProductDTO createProduct)
         {
-            throw new NotImplementedException();
+
+            var product = Product.Create(
+                createProduct.Name,
+                createProduct.Description,
+                createProduct.CategoryId,
+                createProduct.Quantity,
+                createProduct.Price);
+
+
+            var productId = await _productRepository.SaveAsync(
+                product);
+
+            return productId;
         }
 
-        public Task<ProductDetailsDTO> GetProductDetailsAsync(long? productId)
+        public async Task DeleteProductAsync(
+            long? productId)
         {
-            throw new NotImplementedException();
+            if (productId is null)
+            {
+                throw new ArgumentNullException(
+                    nameof(productId),
+                    "Product id is requred");
+            }
+
+            var product = await _productRepository.GetAsync(
+                productId);
+
+            if (product is null)
+            {
+                throw new ArgumentException(
+                    $"Product wit id {productId} does not exist",
+                    nameof(product));
+            }
+
+            await _productRepository.DeleteAsync(product);
         }
 
-        public Task<IEnumerable<ProductShortDTO>> GetProductListAsync(long? categoryId)
+        public async Task UpdateProductAsync(
+            long? productId,
+            UpdateProductDTO updateProduct)
         {
-            throw new NotImplementedException();
+            if (productId is null)
+            {
+                throw new ArgumentNullException(
+                    nameof(productId),
+                    "Product id is requred");
+            }
+
+            var product = await _productRepository.GetAsync(
+                productId);
+
+            if (product is null)
+            {
+                throw new ArgumentException(
+                    $"Product wit id {productId} does not exist",
+                    nameof(product));
+            }
+
+            product.Update(
+                updateProduct.Name,
+                updateProduct.Description,
+                updateProduct.Quantity,
+                updateProduct.Price);
+
+            await _productRepository.UpdateAsync(product);
         }
 
-        public Task UpdateProductAsync(long? productId, UpdateProductDTO updateProduct)
+        public async Task<ProductDetailsDTO> GetProductDetailsAsync(
+            long? productId)
         {
-            throw new NotImplementedException();
+            if (productId is null)
+            {
+                throw new ArgumentNullException(
+                    nameof(productId),
+                    "Product id is requred");
+            }
+
+            var product = await _productRepository.GetAsync(
+                productId);
+
+            if (product is null)
+            {
+                throw new ArgumentException(
+                    $"Product wit id {productId} does not exist",
+                    nameof(product));
+            }
+
+            return _mapper.Map<ProductDetailsDTO>(product);
+        }
+
+        public async Task<IEnumerable<ProductShortDTO>> GetProductListAsync(
+            long? categoryId)
+        {
+            var products = categoryId == null
+                ? await _productRepository.GetAsync()
+                : await _productRepository.GetByCategoryAsync(categoryId);
+
+            return _mapper.Map<IEnumerable<ProductShortDTO>>(products);
         }
     }
 }

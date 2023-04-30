@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DnDShop.Infrastructure.Database.Mappings
 {
-    public sealed class CategoryMapping
+    public sealed class CategoryMapping : IEntityTypeConfiguration<Category>
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {

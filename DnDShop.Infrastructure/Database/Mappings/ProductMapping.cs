@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DnDShop.Infrastructure.Database.Mappings
 {
-    public sealed class ProductMapping
+    public sealed class ProductMapping : IEntityTypeConfiguration<Product>
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
