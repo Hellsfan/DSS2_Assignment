@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DnDShop.Application.Configurations;
 using DnDShop.Infrastructure.Database.Configuration;
+using DnDShop.Web.Middlewares;
 
 namespace DnDShop.Web
 {
@@ -35,6 +36,8 @@ namespace DnDShop.Web
                 typeof(Infrastructure.Database.Configuration.ApplicationConfiguration).Assembly);
 
             services.AddServices();
+            services.AddMiddlewares();
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,12 +51,12 @@ namespace DnDShop.Web
             app.UseStaticFiles();
 
             app.UseRouting();
-/*            app.UseSwagger();
+            app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 options.RoutePrefix = string.Empty;
-            });*/
+            });
 
             app.UseAuthorization();
             app.UseMigrations();
